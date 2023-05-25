@@ -28,8 +28,8 @@ def DPGMM_sampling(device, mu0, K, sigma, n,
         device: dict, device information includes 'tcp_speed_results'
         mu0: float, mean of the prior
         alpha: float, concentration parameter
-        K: int, number of clusters
-        sigma: float, divergence of the prior
+        K: int, number of sampled distinct devices
+        sigma: float, divergence of the sampled distinct devices
         n: int, number of clients
         seed: int, random seed
         is_plot: bool, whether to plot the sampled distribution
@@ -99,7 +99,7 @@ def DPCSM_sampling(score_dict, n, alpha, start_rank):
 
     :param score_dict: states' score used for sampling
     :param n: sample size
-    :param alpha: divergence of the prior
+    :param alpha: concentration parameter
     :param start_rank: Start rank of the states
     :return:
     """
