@@ -24,16 +24,16 @@ def find_closest_device(new_mu, speed: Dict[str, List[float]]) -> int:
 def DPGMM_sampling(device, mu0, K, sigma, n,
                    alpha=1000, seed=42, is_plot=False) -> Tuple[int, float, float, List[dict]]:
     """
-    Args:
-        device: dict, device information includes 'tcp_speed_results'
-        mu0: float, mean of the prior
-        alpha: float, concentration parameter
-        K: int, number of clusters
-        sigma: float, divergence of the prior
-        n: int, number of clients
-        seed: int, random seed
-        is_plot: bool, whether to plot the sampled distribution
-    Returns:
+    Sample the distribution of the device speed with Dirichlet Process Gaussian Mixture Model
+    :param device: dict, device information includes 'tcp_speed_results'
+    :param mu0: float, mean of the prior
+    :param K: int, number of distinct devices
+    :param sigma: float, divergence of the sampled distinct devices
+    :param n: int, number of clients
+    :param alpha: float, concentration parameter
+    :param seed: int, random seed
+    :param is_plot: bool, whether to plot the sampled distribution
+    :returns:
     """
     generator = np.random.default_rng(seed)
     speed = get_speed(device)
@@ -96,10 +96,10 @@ def DPGMM_sampling(device, mu0, K, sigma, n,
 
 def DPCSM_sampling(score_dict, n, alpha, start_rank):
     """
-
+    Sample the distribution of the states with Dirichlet Process Construction Based Sampling Method
     :param score_dict: states' score used for sampling
     :param n: sample size
-    :param alpha: divergence of the prior
+    :param alpha: concentration parameter
     :param start_rank: Start rank of the states
     :return:
     """

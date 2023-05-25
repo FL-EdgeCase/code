@@ -61,18 +61,22 @@ def sc_ratio(network_speed_list: List[List[float]],
     return np.mean(sc_ratio_seq)
 
 
-def st_client_ratio(trace, guid, t_cost=30, ddl=30) -> float:
+def success_ratio(trace, guid, t_cost=30, ddl=30, is_bit=True):
     """
     Calculate the ST-Client-Ratio
     :param trace: raw data from cached_timers.json includes 'trace_start', 'trace_end' and 'ready_time'
     :param guid: the guid of the trace to be calculated
     :param t_cost: simulation time cost
     :param ddl: specified deadline
+    :param is_bit: whether the model size is in bit or not
     :return:
     """
     start = int(trace[guid]["trace_start"])
     end = int(trace[guid]["trace_end"])
     ready_time = trace[guid]["ready_time"]
+    if is_bit:
+        t_cost = int(t_cost / 4) + 1
+        ddl = ddl // 4
     time_interval = np.zeros(end - start)
     exp_time = []
     suc_times = 0
@@ -128,3 +132,32 @@ def st_client_ratio(trace, guid, t_cost=30, ddl=30) -> float:
             suc_times += 1
 
     return suc_times / (end - start)
+
+
+def st_client_ratio(trace, guid, ddl):
+    """
+    Calculate the ST-Client-Ratio
+    :param trace: raw data from cached_timers.json includes 'trace_start', 'trace_end' and 'ready_time'
+    :param guid: the guid of the trace to be calculated
+    :param ddl: specified deadline
+    :return:
+    """
+
+    success_ratio_list = []
+    for t_cost in range(1, 1 + ddl, ddl // 10):
+        success_ratio_list.append(success_ratio(trace, guid, t_cost, ddl))
+
+    return np.mean(success_ratio_list)
+
+
+def st_ratio(trace, guids, ddl):
+    """
+    Calculate the ST-Ratio
+    :param trace: raw data from cached_timers.json includes 'trace_start', 'trace_end' and 'ready_time'
+    :param ddl: specified deadline
+    :return:
+    """
+    client_ratio_list = []
+    for guid in tqdm(guids):
+        client_ratio_list.append(st_client_ratio(trace, guid, ddl))
+    return np.mean(client_ratio_list)
